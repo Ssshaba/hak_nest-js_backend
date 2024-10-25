@@ -44,19 +44,19 @@ enum TaskStatus {
 }
 
 model User {
-  id                   Int         @id @default(autoincrement())
+  id                   Int          @id @default(autoincrement())
   firstName            String?
   lastName             String?
   middleName           String?
-  role                 Role        @default(SPECIALIST)
-  login                String      @unique
-  email                String?     @unique
+  role                 Role         @default(SPECIALIST)
+  login                String       @unique
+  email                String?      @unique
   password             String
   phone                String?
   telegram             String?
   direction            String?
   position             String?
-  status               UserStatus? @default(PRACTICE)
+  status               UserStatus?  @default(PRACTICE)
   study_group          String?
   plans                String?
   about                String?
@@ -72,10 +72,11 @@ model User {
   requisites           String?
   npd_reference        String?
   projectId            Int?
-  review_tasks         Task[]      @relation("TasksToReview")
-  tasks                Task[]      @relation("TasksToComplete")
-  own_projects         Project[]   @relation("OwnerToProject")
-  projects             Project[]   @relation("UserToProject")
+  review_tasks         Task[]       @relation("TasksToReview")
+  tasks                Task[]       @relation("TasksToComplete")
+  own_projects         Project[]    @relation("OwnerToProject")
+  projects             Project[]    @relation("UserToProject")
+  competencies         Competency[] @relation("UserToCompetency")
 }
 
 model Project {
@@ -118,4 +119,11 @@ model Task {
   executor_id Int?
   status      TaskStatus @default(NOTSTARTED)
   hours       Int        @default(0)
+}
+
+model Competency {
+  // стек пользователей
+  id    Int    @id @default(autoincrement())
+  text  String @unique
+  users User[] @relation("UserToCompetency")
 }
