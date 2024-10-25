@@ -20,7 +20,8 @@ services:
       - DATABASE_PORT=5432
     ports:
       - '3500:3500'
-
+    volumes:
+      - .:/app
   postgresql:
     image: postgres
     container_name: postgres_container_db
