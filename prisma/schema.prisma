@@ -7,7 +7,66 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum UserRole {
+enum Role {
   ADMIN
-  CLIENT
+  CUSTOMER
+  SPECIALIST
+}
+
+enum UserStatus {
+  INTERNSHIP
+  PRACTICE
+  SPECIALIST
+}
+
+enum InternshipStatus {
+  INPROGRESS
+  SUCCESSCOMPLETED
+  BADCOMPELTED
+}
+
+enum StatusesForProject {
+  COMPLETED
+  INPROGRESS
+  NOTSTARTED
+  CHECK
+  CANCEL
+}
+
+enum TaskStatus {
+  NOTSTARTED
+  INPROGRESS
+  BLOCKED
+  COMPLETED
+  VERIFICATION
+}
+
+model User {
+  id                   Int         @id @default(autoincrement())
+  firstName            String?
+  lastName             String?
+  middleName           String?
+  role                 Role        @default(SPECIALIST)
+  login                String      @unique
+  email                String?     @unique
+  password             String
+  phone                String?
+  telegram             String?
+  direction            String? // профель пользователя(front/back/UI)
+  position             String?
+  status               UserStatus? @default(PRACTICE)
+  study_group          String?
+  plans                String?
+  about                String?
+  portfolio            String?
+  note                 String?
+  inn                  String?
+  rate                 Int?
+  snils                String?
+  birthday             String?
+  passport_data        String?
+  registration_address String?
+  living_address       String?
+  requisites           String?
+  npd_reference        String?
 }
