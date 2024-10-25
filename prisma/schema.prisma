@@ -11,6 +11,7 @@ enum Role {
   ADMIN
   CUSTOMER
   SPECIALIST
+  GUEST
 }
 
 enum UserStatus {
@@ -52,7 +53,7 @@ model User {
   password             String
   phone                String?
   telegram             String?
-  direction            String? // профель пользователя(front/back/UI)
+  direction            String?
   position             String?
   status               UserStatus? @default(PRACTICE)
   study_group          String?
@@ -69,4 +70,51 @@ model User {
   living_address       String?
   requisites           String?
   npd_reference        String?
+  projectId            Int?
+  review_tasks         Task[]      @relation("TasksToReview")
+  tasks                Task[]      @relation("TasksToComplete")
+  own_projects         Project[]   @relation("OwnerToProject")
+  projects             Project[]   @relation("UserToProject")
+}
+
+model Project {
+  id              Int                @id @default(autoincrement())
+  title           String
+  owner           User?              @relation("OwnerToProject", fields: [owner_id], references: [id])
+  owner_id        Int?
+  director        String?
+  customer        String
+  contact_person  String
+  contact_data    String
+  description     String?
+  service_name    String?
+  document_number Int                @default(1)
+  contract        String?
+  contract_date   DateTime?
+  technical_task  String?
+  comment         String?
+  start_date      DateTime?
+  end_date        DateTime?
+  tasks           Task[]
+  organization_id Int?
+  status          StatusesForProject @default(NOTSTARTED)
+  users           User[]             @relation("UserToProject")
+}
+
+model Task {
+  id          Int        @id @default(autoincrement())
+  title       String
+  description String?
+  start_date  DateTime?
+  end_date    DateTime?
+  is_done     Boolean    @default(false)
+  project     Project    @relation(fields: [project_id], references: [id])
+  project_id  Int
+  comment     String?
+  reviewer    User?      @relation("TasksToReview", fields: [reviewer_id], references: [id])
+  reviewer_id Int?
+  executor    User?      @relation("TasksToComplete", fields: [executor_id], references: [id])
+  executor_id Int?
+  status      TaskStatus @default(NOTSTARTED)
+  hours       Int        @default(0)
 }

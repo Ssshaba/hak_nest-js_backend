@@ -5,7 +5,7 @@ services:
       context: ./
       dockerfile: Dockerfile
     image: platform
-    container_name: app-hakaton-backend
+    container_name: hakaton-backend
     env_file: .env
     networks:
       - platform_network
@@ -23,7 +23,7 @@ services:
 
   postgresql:
     image: postgres
-    container_name: db_postgres_container
+    container_name: postgres_container_db
     networks:
       - platform_network
     ports:
