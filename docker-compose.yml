@@ -1,0 +1,42 @@
+version: '3'
+services:
+  app:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    image: platform
+    container_name: app-hakaton-backend
+    env_file: .env
+    networks:
+      - platform_network
+    links:
+      - postgresql:db
+    depends_on:
+      - postgresql
+    environment:
+      - DATABASE_USER=root
+      - DATABASE_PASSWORD=root
+      - DATABASE_NAME=platform
+      - DATABASE_PORT=5432
+    ports:
+      - '3500:3500'
+
+  postgresql:
+    image: postgres
+    container_name: db_postgres_container
+    networks:
+      - platform_network
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DATABASE=platform
+    command: postgres
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+volumes:
+  postgres_data:
+networks:
+  platform_network:
