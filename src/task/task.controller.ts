@@ -176,7 +176,7 @@ export class TaskController {
   @ApiProduces('application/json')
   @ApiResponse({
     status: 200,
-    description: 'ссылка для скачивания файла с задачами',
+    description: 'CCылка для скачивания файла с задачами',
     schema: {
       type: 'object',
       properties: {

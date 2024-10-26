@@ -375,11 +375,15 @@ export class TaskService {
 
   async exportTasksToExcel(projectId: number): Promise<string> {
     console.log('поолучаем данные задач для проекта');
+    console.log(`projectId: ${projectId}`);
+
 
     // Пример запроса с Prisma
     const tasks = await this.prisma.task.findMany({
       where: { project_id: projectId }});
 
+
+    console.log(`${tasks}`);
     console.log('Получили данные');
 
     const workbook = new Workbook();
