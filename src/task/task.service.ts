@@ -212,7 +212,8 @@ export class TaskService {
             reviewer_id: id,
           },
         ];
-      } else if (role === 'SPECIALIST') {
+      }
+      if (role === 'SPECIALIST') {
         whereObject['OR'] = [
           {
             executor_id: id,
