@@ -374,13 +374,11 @@ export class TaskService {
 
 
   async exportTasksToExcel(projectId: number): Promise<string> {
-    console.log('Получаем данные задач для проекта');
+    console.log('поолучаем данные задач для проекта');
 
     // Пример запроса с Prisma
     const tasks = await this.prisma.task.findMany({
-      where: { project_id: projectId },
-      include: { project: true }, // Загрузка связанных данных проекта, если нужно
-    });
+      where: { project_id: projectId }});
 
     console.log('Получили данные');
 
@@ -396,7 +394,6 @@ export class TaskService {
       { header: 'Дата окончания', key: 'end_date', width: 15 },
       { header: 'Статус', key: 'status', width: 15 },
       { header: 'Часы', key: 'hours', width: 10 },
-      { header: 'Проект', key: 'project_title', width: 20 },
     ];
     console.log('шаг2');
 
@@ -409,7 +406,6 @@ export class TaskService {
         end_date: task.end_date ? new Date(task.end_date).toLocaleString() : '',
         status: task.status,
         hours: task.hours,
-        project_title: task.project?.title ?? '',
       });
     });
     console.log('шаг3');
