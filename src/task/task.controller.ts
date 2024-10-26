@@ -7,13 +7,13 @@ import {
   Patch,
   Post,
   Query,
-  Req,
+  Req, Res,
   UseGuards,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
-  ApiBody,
-  ApiParam,
+  ApiBody, ApiOperation,
+  ApiParam, ApiProduces,
   ApiQuery,
   ApiResponse,
   ApiTags,
@@ -146,9 +146,51 @@ export class TaskController {
   @ApiBearerAuth('auth')
   @Roles(Role.ADMIN, Role.SPECIALIST, Role.CUSTOMER, Role.GUEST)
   @Delete('/:id')
+  @ApiOperation({ summary: 'Удаление таски' })
   @ApiParam({ name: 'id', required: true })
   @ApiResponse({ type: Boolean })
   async deleteTask(@Param('id') id: string): Promise<Boolean> {
     return this.taskServcie.deleteTask(+id);
+  }
+
+ /* @Get('export/:projectId')
+  async exportTasksToExcel(@Param('projectId') projectId: number, @Res() res:any) {
+    try {
+      const fileUrl = await this.taskServcie.exportTasksToExcel(projectId);
+      res.send({ downloadUrl: fileUrl });
+    } catch (error) {
+      res.status(500).send('Ошибка при экспорте задач');
+    }
+  }*/
+
+  @ApiBearerAuth('auth')
+  @Roles(Role.ADMIN, Role.SPECIALIST, Role.CUSTOMER, Role.GUEST)
+  @Get('export/:projectId')
+  @ApiOperation({ summary: 'Экспорт задач проекта в Excel' })
+  @ApiParam({
+    name: 'projectId',
+    required: true,
+    description: 'ID проекта, для которого необходимо экспортировать задачи',
+    schema: { type: 'integer' },
+  })
+  @ApiProduces('application/json')
+  @ApiResponse({
+    status: 200,
+    description: 'Ссылка для скачивания файла с задачами',
+    schema: {
+      type: 'object',
+      properties: {
+        downloadUrl: { type: 'string', example: 'https://storage.example.com/file.xlsx' },
+      },
+    },
+  })
+  @ApiResponse({ status: 500, description: 'Ошибка при экспорте задач' })
+  async exportTasksToExcel(@Param('projectId') projectId: number, @Res() res: any) {
+    try {
+      const fileUrl = await this.taskServcie.exportTasksToExcel(projectId);
+      res.send({ downloadUrl: fileUrl });
+    } catch (error) {
+      res.status(500).send('Ошибка при экспорте задач');
+    }
   }
 }

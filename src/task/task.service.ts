@@ -6,6 +6,10 @@ import { GetTaskAllInfoDto, GetTaskShortDto } from './dto/get.task.dto';
 import { Role } from '@prisma/client';
 import {MailerService} from "@nestjs-modules/mailer";
 import {join} from "path";
+import { Workbook } from 'exceljs';
+import * as fs from 'fs';
+import * as path from 'path';
+import {uploadFileToBucket} from "../utils/aws";
 
 @Injectable()
 export class TaskService {
@@ -363,5 +367,50 @@ export class TaskService {
     } catch (error) {
       throw new BadRequestException(error);
     }
+  }
+
+
+  async exportTasksToExcel(projectId: number): Promise<string> {
+    // Получаем данные задач для проекта
+    const tasks = await this.getAllTasksForProject(null, null, null, null, null, projectId, null);
+
+    const workbook = new Workbook();
+    const worksheet = workbook.addWorksheet('Tasks');
+
+    worksheet.columns = [
+      { header: 'ID', key: 'id', width: 10 },
+      { header: 'Название', key: 'title', width: 30 },
+      { header: 'Описание', key: 'description', width: 40 },
+      { header: 'Дата начала', key: 'start_date', width: 15 },
+      { header: 'Дата окончания', key: 'end_date', width: 15 },
+      { header: 'Статус', key: 'status', width: 15 },
+      { header: 'Часы', key: 'hours', width: 10 },
+      { header: 'Проект', key: 'project_title', width: 20 },
+    ];
+
+    tasks.forEach(task => {
+      worksheet.addRow({
+        id: task.id,
+        title: task.title,
+        description: task.description,
+        start_date: task.start_date ? new Date(task.start_date).toLocaleString() : '',
+        end_date: task.end_date ? new Date(task.end_date).toLocaleString() : '',
+        status: task.status,
+        hours: task.hours,
+        project_title: task.project?.title ?? '',
+      });
+    });
+
+    const filePath = path.resolve(__dirname, `../../exports/tasks_project_${projectId}.xlsx`);
+    await workbook.xlsx.writeFile(filePath);
+
+    // Загрузка файла в бакет
+    const bucketName = process.env.BUCKET;
+    const key = `tasks_project_${projectId}_${Date.now()}.xlsx`; // Уникальный ключ
+
+    await uploadFileToBucket(filePath, bucketName, key);
+
+    // Возвращаем URL для доступа к файлу
+    return `https://${bucketName}.storage.yandexcloud.net/${key}`;
   }
 }
