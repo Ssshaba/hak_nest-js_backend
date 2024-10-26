@@ -22,17 +22,17 @@ export class CreateProjectDto {
   @IsNumber()
   owner_id: number;
 
-  @ApiProperty({ name: 'customer', default: 'string' })
+  @ApiProperty({ name: 'customer', default: 'Заказчик' })
   @IsNotEmpty()
   @IsString()
   customer: string;
 
-  @ApiProperty({ name: 'contact_person', default: 'string' })
+  @ApiProperty({ name: 'contact_person', default: 'Контактное лицо(ФИО)' })
   @IsNotEmpty()
   @IsString()
   contact_person: string;
 
-  @ApiProperty({ name: 'contact_data', default: 'string' })
+  @ApiProperty({ name: 'contact_data', default: 'Номер телефона контактного лица' })
   @IsNotEmpty()
   @IsString()
   contact_data: string;
@@ -66,36 +66,6 @@ export class CreateProjectDto {
   @IsOptional()
   @IsString()
   status: StatusesForProject;
-
-  @ApiProperty({ name: 'director', default: 'string' })
-  @IsOptional()
-  @IsString()
-  director: string;
-
-  @ApiProperty({ name: 'service_name', default: 'string' })
-  @IsOptional()
-  @IsString()
-  service_name: string;
-
-  @ApiProperty({ name: 'document_number', default: 'number' })
-  @IsOptional()
-  @IsString()
-  document_number: number;
-
-  @ApiProperty({ name: 'technical_task', default: 'string' })
-  @IsOptional()
-  @IsString()
-  technical_task: string;
-
-  @ApiProperty({ name: 'comment' })
-  @IsOptional()
-  @IsString()
-  comment: string;
-
-  @ApiProperty({ name: 'organization_id' })
-  @IsOptional()
-  @IsNumber()
-  organization_id: number;
 
   @ApiProperty({ name: 'tasks', default: [] })
   @IsOptional()

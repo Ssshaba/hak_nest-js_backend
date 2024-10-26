@@ -280,11 +280,6 @@ export class ProjectService {
           owner: true,
           tasks: true,
           users: true,
-       /*   organization: {
-            include: {
-              contact_person: true,
-            },
-          },*/
         },
       });
     } catch (error) {
