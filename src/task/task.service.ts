@@ -379,7 +379,7 @@ export class TaskService {
       console.log(`projectId: ${projectId}`);
 
       const tasks = await this.prisma.task.findMany({
-        where: { project_id: projectId }
+        where: { project_id: Number(projectId) }
       });
 
       console.log(`Полученные задачи: ${JSON.stringify(tasks)}`); // Логируем задачи для проверки
