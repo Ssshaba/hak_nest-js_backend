@@ -802,6 +802,7 @@ export class UserService {
           ...userDto,
           password,
           email: userDto.login,
+          role: 'GUEST',
         },
       });
       await this.mailerService.sendMail({
