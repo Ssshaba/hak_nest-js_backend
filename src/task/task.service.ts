@@ -4,10 +4,14 @@ import { CreateTaskDto } from './dto/create.task.dto';
 import { UpdateTaskDto } from './dto/update.task.dto';
 import { GetTaskAllInfoDto, GetTaskShortDto } from './dto/get.task.dto';
 import { Role } from '@prisma/client';
+import {MailerService} from "@nestjs-modules/mailer";
+import {join} from "path";
 
 @Injectable()
 export class TaskService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService,
+  private readonly mailerService: MailerService
+) {}
 
   private createTasksOrder(desc: string[]): object[] {
     const params = {
@@ -259,16 +263,51 @@ export class TaskService {
 
   async createTask(createTaskDto: CreateTaskDto): Promise<GetTaskAllInfoDto> {
     try {
-      return await this.prisma.task.create({
+      const task = await this.prisma.task.create({
         data: {
           ...createTaskDto,
         },
         include: {
           executor: true,
-          project: true,
           reviewer: true,
+          project: true,
         },
       });
+
+      if (task.executor?.email) {
+        await this.mailerService.sendMail({
+          from: process.env.MAIL,
+          to: task.executor.email,
+          subject: 'Уведомление о новой задаче',
+          template: join(__dirname, '../templates', 'newTaskNotification'),
+          context: {
+            name: task.executor.firstName,
+            taskTitle: task.title,
+           // taskDescription: task.description ?? '',
+            startDate: task.start_date?.toISOString() ?? '',
+            endDate: task.end_date?.toISOString() ?? '',
+          },
+        });
+      }
+
+
+      if (task.reviewer?.email) {
+        await this.mailerService.sendMail({
+          from: process.env.MAIL,
+          to: task.reviewer.email,
+          subject: 'Уведомление о новой задаче',
+          template: join(__dirname, '../templates', 'newTaskNotification'),
+          context: {
+            name: task.reviewer.firstName,
+            taskTitle: task.title,
+           // taskDescription: task.description ?? '',
+            startDate: task.start_date?.toISOString() ?? '',
+            endDate: task.end_date?.toISOString() ?? '',
+          },
+        });
+      }
+
+      return task;
     } catch (error) {
       throw new BadRequestException(error);
     }

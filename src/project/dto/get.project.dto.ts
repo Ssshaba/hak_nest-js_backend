@@ -58,8 +58,6 @@ export class GetProjectShortDto {
   @ApiProperty({ name: 'owner_id' })
   owner_id: number;
 
-  @ApiProperty({ name: 'organization_id' })
-  organization_id: number;
 
   @ApiProperty({ name: 'comment' })
   comment: string;

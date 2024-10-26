@@ -42,7 +42,7 @@ export class ProjectController {
   constructor(private readonly projectService: ProjectService) {}
 
   @ApiBearerAuth('auth')
-  @Roles(Role.ADMIN, Role.CUSTOMER, Role.SPECIALIST)
+  @Roles(Role.ADMIN, Role.CUSTOMER, Role.SPECIALIST, Role.GUEST)
   @Get('')
   @ApiQuery({
     name: 'fields',
@@ -87,7 +87,7 @@ export class ProjectController {
   }
 
   @ApiBearerAuth('auth')
-  @Roles(Role.ADMIN, Role.SPECIALIST, Role.CUSTOMER)
+  @Roles(Role.ADMIN, Role.SPECIALIST, Role.CUSTOMER, Role.GUEST)
   @Get('/list')
   @ApiQuery({ name: 'title', type: String, required: false })
   @ApiOperation({
@@ -100,7 +100,7 @@ export class ProjectController {
   }
 
   @ApiBearerAuth('auth')
-  @Roles(Role.ADMIN, Role.CUSTOMER, Role.SPECIALIST)
+  @Roles(Role.ADMIN, Role.CUSTOMER, Role.SPECIALIST, Role.GUEST)
   @Get('/:id')
   @ApiResponse({ type: GetProjectAllInfoDto })
   @ApiParam({ name: 'id', required: true })
@@ -120,7 +120,7 @@ export class ProjectController {
   }
 
   @ApiBearerAuth('auth')
-  @Roles(Role.ADMIN, Role.CUSTOMER, Role.SPECIALIST)
+  @Roles(Role.ADMIN, Role.CUSTOMER, Role.SPECIALIST, Role.GUEST)
   @Patch('/:id')
   @ApiParam({ name: 'id', required: true })
   @ApiResponse({ type: GetProjectAllInfoDto })

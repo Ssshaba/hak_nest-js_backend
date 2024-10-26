@@ -103,7 +103,7 @@ export class TaskController {
   }
 
   @ApiBearerAuth('auth')
-  @Roles(Role.ADMIN, Role.SPECIALIST, Role.CUSTOMER)
+  @Roles(Role.ADMIN, Role.SPECIALIST, Role.CUSTOMER, Role.GUEST)
   @Get('/:id')
   @ApiParam({ name: 'id', required: true })
   @ApiResponse({ type: GetTaskAllInfoDto })
@@ -112,7 +112,7 @@ export class TaskController {
   }
 
   @ApiBearerAuth('auth')
-  @Roles(Role.ADMIN, Role.SPECIALIST, Role.CUSTOMER)
+  @Roles(Role.ADMIN, Role.SPECIALIST, Role.CUSTOMER, Role.GUEST)
   @Post('')
   @ApiBody({ type: CreateTaskDto })
   @ApiResponse({ type: GetTaskAllInfoDto })
@@ -123,7 +123,7 @@ export class TaskController {
   }
 
   @ApiBearerAuth('auth')
-  @Roles(Role.ADMIN, Role.SPECIALIST, Role.CUSTOMER)
+  @Roles(Role.ADMIN, Role.SPECIALIST, Role.CUSTOMER, Role.GUEST)
   @Patch('/:id')
   @ApiParam({ name: 'id', required: true })
   @ApiResponse({ type: GetTaskAllInfoDto })
@@ -136,7 +136,7 @@ export class TaskController {
   }
 
   @ApiBearerAuth('auth')
-  @Roles(Role.ADMIN, Role.SPECIALIST, Role.CUSTOMER)
+  @Roles(Role.ADMIN, Role.SPECIALIST, Role.CUSTOMER, Role.GUEST)
   @Delete('/:id')
   @ApiParam({ name: 'id', required: true })
   @ApiResponse({ type: Boolean })
