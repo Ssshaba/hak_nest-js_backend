@@ -5,7 +5,7 @@ import { UserController } from './user.controller';
 import { CompetencyService } from 'src/competency/competency.service';
 
 @Module({
-  providers: [UserService, PrismaService, CompetencyService],
+  providers: [UserService, PrismaService,  CompetencyService],
   controllers: [UserController],
   exports: [UserService],
 })

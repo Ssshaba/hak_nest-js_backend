@@ -1,11 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { GetCompetencyShortDto } from 'src/competency/dto/get.competency.dto';
-import { GetInternshipDto } from 'src/internship/dto/get.internship.dto';
 import { Role, UserStatus } from '@prisma/client';
 import { GetTaskAllInfoDto, GetTaskShortDto } from 'src/task/dto/get.task.dto';
 import { GetProjectShortDto } from 'src/project/dto/get.project.dto';
 import { CreateUserDto } from './create.user.dto';
-import { GetOrganizationShortDto } from 'src/organization/dto/get.organization.dto';
 
 export class GetUserDto {
   @ApiProperty({ name: 'id', default: 'number' })
@@ -20,13 +18,13 @@ export class GetUserDto {
   @ApiProperty({ default: 'Отчество' })
   middleName: string;
 
-  @ApiProperty({ default: 'string' })
+  @ApiProperty({ default: 'описание' })
   direction: string;
 
   @ApiProperty({ default: 'Номер телефона' })
   phone: string;
 
-  @ApiProperty({ default: 'Телеграмм' })
+  @ApiProperty({ default: 'Телеграмм аккаунт' })
   telegram: string;
 
   @ApiProperty({
@@ -96,13 +94,10 @@ export class GetUserForInternshipDto extends GetUserDto {
   @ApiProperty({ name: 'competencies', default: [{}] })
   competencies: GetCompetencyShortDto[];
 
-  @ApiProperty({ name: 'internships', default: [{}] })
-  internships: GetInternshipDto[];
+
 }
 
 export class GetUserAllInfoDto extends GetUserDto {
-  @ApiProperty({ name: 'internships' })
-  internships: GetInternshipDto[];
 
   @ApiProperty({ name: 'competencies' })
   competencies: GetCompetencyShortDto[];
@@ -120,9 +115,6 @@ export class GetUserAllInfoDto extends GetUserDto {
 export class GetUserAllInfoWithPasswordDto extends GetUserAllInfoDto {
   @ApiProperty({ name: 'password' })
   password: string;
-
-  @ApiProperty({ name: 'organization' })
-  organization: Partial<GetOrganizationShortDto>;
 }
 
 export class GetUserListItem {

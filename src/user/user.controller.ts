@@ -229,7 +229,7 @@ export class UserController {
     return this.userService.updateUser(+id, updateUserDto);
   }
 
-  @ApiBearerAuth('auth')
+ /* @ApiBearerAuth('auth')
   @Roles(Role.ADMIN)
   @ApiOperation({ description: 'Удаление пользователя (только для Админа)' })
   @Delete('/:id')
@@ -247,5 +247,5 @@ export class UserController {
   async deleteUser(@Req() req): Promise<Boolean> {
     const { id } = req.user;
     return this.userService.deleteUserById(+id);
-  }
+  }*/
 }
