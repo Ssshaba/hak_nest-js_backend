@@ -8,12 +8,17 @@ import config from 'src/config/config';
 import {CompetencyModule} from "../competency/competency.module";
 import {getMailConfig} from "../config/mail.config";
 import {MailerModule} from "@nestjs-modules/mailer";
+import {ProjectModule} from "../project/project.module";
+import {TaskModule} from "../task/task.module";
 
 
 @Module({
   imports: [
     UserModule,
     AuthModule,
+    CompetencyModule,
+    ProjectModule,
+    TaskModule,
     CompetencyModule,
     ConfigModule.forRoot({
       isGlobal: true,

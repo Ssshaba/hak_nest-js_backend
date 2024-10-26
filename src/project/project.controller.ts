@@ -34,6 +34,7 @@ import {
 import { UpdateProjectDto } from './dto/update.project.dto';
 import { ProjectStage } from './enum/stage';
 import { Public } from 'src/auth/guards/public.guard';
+
 @UseGuards(RolesGuard)
 @ApiTags('Project')
 @Controller('project')
