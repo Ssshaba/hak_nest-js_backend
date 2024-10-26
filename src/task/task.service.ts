@@ -185,22 +185,34 @@ export class TaskService {
   }
 
   async getAllTasksForProject(
-    fields: string,
-    desc: string,
-    search: string,
-    role: Role,
-    id: number,
-    projectId: number,
+      fields: string,
+      desc: string,
+      search: string,
+      role: Role,
+      id: number,
+      projectId: number,
+      onlyMyTasks: boolean,
   ): Promise<Partial<GetTaskShortDto>[]> {
     const searchParam = search ? search.trim() : '';
     const searchObject =
-      searchParam.length > 0 ? this.createSearchObject(searchParam) : {};
+        searchParam.length > 0 ? this.createSearchObject(searchParam) : {};
     const selectedFields = fields ? fields.split(',') : [];
     const selectedDesc = desc ? desc.split(',') : [];
     const orderParams = this.createTasksOrder(selectedDesc);
-    const whereObject = {};
+    const whereObject: any = {};
+
     try {
-      if (role === 'SPECIALIST') {
+      if (onlyMyTasks) {
+        // Фильтрация только по задачам текущего пользователя
+        whereObject['OR'] = [
+          {
+            executor_id: id,
+          },
+          {
+            reviewer_id: id,
+          },
+        ];
+      } else if (role === 'SPECIALIST') {
         whereObject['OR'] = [
           {
             executor_id: id,
@@ -216,13 +228,15 @@ export class TaskService {
           },
         };
       }
+
       whereObject['project_id'] = projectId;
+
       if (selectedFields.length) {
         return this.getTasksByFields(
-          selectedFields,
-          orderParams,
-          searchObject,
-          whereObject,
+            selectedFields,
+            orderParams,
+            searchObject,
+            whereObject,
         );
       } else {
         return await this.prisma.task.findMany({
@@ -243,6 +257,7 @@ export class TaskService {
       throw new BadRequestException(error);
     }
   }
+
 
   async getTaskById(id: number): Promise<GetTaskAllInfoDto> {
     try {

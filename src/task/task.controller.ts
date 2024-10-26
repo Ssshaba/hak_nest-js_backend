@@ -83,11 +83,18 @@ export class TaskController {
     required: false,
     description: 'Передается строка, по которой будет осуществляться поиск',
   })
+  @ApiQuery({
+    name: 'onlyMyTasks',
+    required: false,
+    type: Boolean,
+    description: 'Если true, будут возвращены только задачи текущего пользователя',
+  })
   @ApiResponse({ type: [GetTaskShortDto] })
   async getAllTasksForProject(
     @Query('fields') fields: string,
     @Query('order_desc') desc: string,
     @Query('search') search: string,
+    @Query('onlyMyTasks') onlyMyTasks: boolean,
     @Param('id') projectId: string,
     @Req() req,
   ): Promise<Partial<GetTaskShortDto>[]> {
@@ -99,7 +106,8 @@ export class TaskController {
       role,
       id,
       +projectId,
-    );
+      onlyMyTasks,
+  );
   }
 
   @ApiBearerAuth('auth')
