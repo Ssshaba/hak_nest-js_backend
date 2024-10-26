@@ -129,4 +129,7 @@ export class GetUserListItem {
 
   @ApiProperty({})
   middleName: string;
+
+  @ApiProperty({ default: 'Роль' })
+  role: Role;
 }

@@ -374,17 +374,17 @@ export class TaskService {
 
 
   async exportTasksToExcel(projectId: number): Promise<string> {
-    console.log('поолучаем данные задач для проекта');
-    console.log(`projectId: ${projectId}`);
+    try {
+      console.log('Получаем данные задач для проекта');
+      console.log(`projectId: ${projectId}`);
 
+      const tasks = await this.prisma.task.findMany({
+        where: { project_id: projectId }
+      });
 
-    // Пример запроса с Prisma
-    const tasks = await this.prisma.task.findMany({
-      where: { project_id: projectId }});
+      console.log(`Полученные задачи: ${JSON.stringify(tasks)}`); // Логируем задачи для проверки
+      console.log('Получили данные');
 
-
-    console.log(`${tasks}`);
-    console.log('Получили данные');
 
     const workbook = new Workbook();
     const worksheet = workbook.addWorksheet('Tasks');
@@ -429,6 +429,10 @@ export class TaskService {
 
     // Возвращаем URL для доступа к файлу
     return `https://${bucketName}.storage.yandexcloud.net/${key}`;
+    } catch (error) {
+      console.error('Ошибка при получении задач:', error);
+      throw new Error('Не удалось получить данные задач'); // Или обрабатывайте ошибку по-другому
+    }
   }
 
 

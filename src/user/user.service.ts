@@ -636,6 +636,7 @@ export class UserService {
           firstName: true,
           lastName: true,
           middleName: true,
+          role: true,
         },
       });
     } catch (error) {
