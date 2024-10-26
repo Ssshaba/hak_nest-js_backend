@@ -11,7 +11,7 @@ import {
 
 export class CreateUserDto {
   @ApiProperty({
-    default: 'Адрес электронной почты',
+    default: 'Логин(адрес электронной почты)',
     required: false,
   })
   @IsString()
@@ -33,7 +33,7 @@ export class CreateUserDto {
   @IsString()
   middleName: string;
 
-  @ApiProperty({ default: 'string' })
+  /*@ApiProperty({ default: 'string' })
   @IsOptional()
   @IsString()
   direction: string;
@@ -141,5 +141,5 @@ export class CreateUserDto {
   @ApiProperty({ name: 'npd_reference', default: 'string' })
   @IsOptional()
   @IsString()
-  npd_reference: string;
+  npd_reference: string;*/
 }

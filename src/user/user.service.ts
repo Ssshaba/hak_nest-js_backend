@@ -801,6 +801,7 @@ export class UserService {
         data: {
           ...userDto,
           password,
+          email: userDto.login,
         },
       });
       await this.mailerService.sendMail({
@@ -809,6 +810,7 @@ export class UserService {
         subject: 'Данные для входа на платформу',
         template: join(__dirname, '/../templates', 'loginData'),
         context: {
+          name: createdUser.firstName,
           login: createdUser.login,
           password: randomPassword,
           link: process.env.PLATFORM_URL,
