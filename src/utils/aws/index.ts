@@ -12,25 +12,28 @@ const s3ClientInit = (accessKeyId: string, secretAccessKey: string) => {
   });
 };
 
-const uploadFileToBucket = async (filePath: string, bucketName: string, key: string) => {
+export const uploadFileToBucket = async (filePath: string, bucketName: string, key: string) => {
   const s3Client = s3ClientInit(process.env.ACCESS_KEY_ID, process.env.SECRET_ACCESS_KEY);
+  console.log(`Инициализирован клиент S3 для загрузки файла ${filePath}`);
 
-  // Чтение содержимого файла
   const fileContent = fs.readFileSync(filePath);
+  console.log(`Прочитан файл для загрузки в бакет ${bucketName}`);
 
-  // Загрузка файла в бакет
   const command = new PutObjectCommand({
     Bucket: bucketName,
     Key: key,
     Body: fileContent,
   });
 
-  await s3Client.send(command);
-  console.log(`Файл ${key} загружен в бакет ${bucketName}`);
+  try {
+    await s3Client.send(command);
+    console.log(`Файл ${key} успешно загружен в бакет ${bucketName}`);
+  } catch (error) {
+    console.error(`Ошибка при загрузке файла в бакет: ${error}`);
+  }
 
-  // Удаление файла после загрузки
   fs.unlinkSync(filePath);
+  console.log(`Файл ${filePath} удален после загрузки`);
 };
 
 
-export { s3ClientInit, uploadFileToBucket };

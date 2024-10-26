@@ -9,7 +9,10 @@ import {join} from "path";
 import { Workbook } from 'exceljs';
 import * as fs from 'fs';
 import * as path from 'path';
-import {uploadFileToBucket} from "../utils/aws";
+import {uploadFileToBucket} from 'src/utils/aws';
+import {PutObjectCommand} from "@aws-sdk/client-s3";
+import { Buffer } from 'node:buffer';
+import { PassThrough } from 'stream';
 
 @Injectable()
 export class TaskService {
@@ -206,7 +209,7 @@ export class TaskService {
     const whereObject: any = {};
 
     try {
-      if (onlyMyTasks) {
+      if (onlyMyTasks == true) {
         // Фильтрация только по задачам текущего пользователя
         whereObject['OR'] = [
           {
@@ -371,11 +374,19 @@ export class TaskService {
 
 
   async exportTasksToExcel(projectId: number): Promise<string> {
-    // Получаем данные задач для проекта
-    const tasks = await this.getAllTasksForProject(null, null, null, null, null, projectId, null);
+    console.log('Получаем данные задач для проекта');
+
+    // Пример запроса с Prisma
+    const tasks = await this.prisma.task.findMany({
+      where: { project_id: projectId },
+      include: { project: true }, // Загрузка связанных данных проекта, если нужно
+    });
+
+    console.log('Получили данные');
 
     const workbook = new Workbook();
     const worksheet = workbook.addWorksheet('Tasks');
+    console.log('шаг1');
 
     worksheet.columns = [
       { header: 'ID', key: 'id', width: 10 },
@@ -387,6 +398,7 @@ export class TaskService {
       { header: 'Часы', key: 'hours', width: 10 },
       { header: 'Проект', key: 'project_title', width: 20 },
     ];
+    console.log('шаг2');
 
     tasks.forEach(task => {
       worksheet.addRow({
@@ -400,17 +412,24 @@ export class TaskService {
         project_title: task.project?.title ?? '',
       });
     });
+    console.log('шаг3');
 
     const filePath = path.resolve(__dirname, `../../exports/tasks_project_${projectId}.xlsx`);
+    console.log(`Сохраняем файл Excel на диск: ${filePath}`);
+    console.log('шаг4');
+
     await workbook.xlsx.writeFile(filePath);
 
-    // Загрузка файла в бакет
+    console.log('Файл Excel успешно сохранен, загружаем в бакет');
     const bucketName = process.env.BUCKET;
     const key = `tasks_project_${projectId}_${Date.now()}.xlsx`; // Уникальный ключ
 
     await uploadFileToBucket(filePath, bucketName, key);
+    console.log(`Файл ${filePath} загружен в бакет ${bucketName} с ключом ${key}`);
 
     // Возвращаем URL для доступа к файлу
     return `https://${bucketName}.storage.yandexcloud.net/${key}`;
   }
+
+
 }
