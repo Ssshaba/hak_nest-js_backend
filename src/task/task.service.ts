@@ -385,55 +385,59 @@ export class TaskService {
       console.log(`Полученные задачи: ${JSON.stringify(tasks)}`); // Логируем задачи для проверки
       console.log('Получили данные');
 
+      const workbook = new Workbook();
+      const worksheet = workbook.addWorksheet('Tasks');
+      console.log('шаг1');
 
-    const workbook = new Workbook();
-    const worksheet = workbook.addWorksheet('Tasks');
-    console.log('шаг1');
+      worksheet.columns = [
+        { header: 'ID', key: 'id', width: 10 },
+        { header: 'Название', key: 'title', width: 30 },
+        { header: 'Описание', key: 'description', width: 40 },
+        { header: 'Дата начала', key: 'start_date', width: 15 },
+        { header: 'Дата окончания', key: 'end_date', width: 15 },
+        { header: 'Статус', key: 'status', width: 15 },
+        { header: 'Часы', key: 'hours', width: 10 },
+      ];
+      console.log('шаг2');
 
-    worksheet.columns = [
-      { header: 'ID', key: 'id', width: 10 },
-      { header: 'Название', key: 'title', width: 30 },
-      { header: 'Описание', key: 'description', width: 40 },
-      { header: 'Дата начала', key: 'start_date', width: 15 },
-      { header: 'Дата окончания', key: 'end_date', width: 15 },
-      { header: 'Статус', key: 'status', width: 15 },
-      { header: 'Часы', key: 'hours', width: 10 },
-    ];
-    console.log('шаг2');
-
-    tasks.forEach(task => {
-      worksheet.addRow({
-        id: task.id,
-        title: task.title,
-        description: task.description,
-        start_date: task.start_date ? new Date(task.start_date).toLocaleString() : '',
-        end_date: task.end_date ? new Date(task.end_date).toLocaleString() : '',
-        status: task.status,
-        hours: task.hours,
+      tasks.forEach(task => {
+        worksheet.addRow({
+          id: task.id,
+          title: task.title,
+          description: task.description,
+          start_date: task.start_date ? new Date(task.start_date).toLocaleString() : '',
+          end_date: task.end_date ? new Date(task.end_date).toLocaleString() : '',
+          status: task.status,
+          hours: task.hours,
+        });
       });
-    });
-    console.log('шаг3');
+      console.log('шаг3');
 
-    const filePath = path.resolve(__dirname, `../../exports/tasks_project_${projectId}.xlsx`);
-    console.log(`Сохраняем файл Excel на диск: ${filePath}`);
-    console.log('шаг4');
+      const dirPath = path.resolve(__dirname, '../../exports');
+      // Проверяем наличие директории и создаем ее, если она не существует
+      if (!fs.existsSync(dirPath)) {
+        fs.mkdirSync(dirPath, { recursive: true }); // Создаем директорию
+      }
 
-    await workbook.xlsx.writeFile(filePath);
+      const filePath = path.resolve(dirPath, `tasks_project_${projectId}.xlsx`);
+      console.log(`Сохраняем файл Excel на диск: ${filePath}`);
+      console.log('шаг4');
 
-    console.log('Файл Excel успешно сохранен, загружаем в бакет');
-    const bucketName = process.env.BUCKET;
-    const key = `tasks_project_${projectId}_${Date.now()}.xlsx`; // Уникальный ключ
+      await workbook.xlsx.writeFile(filePath);
 
-    await uploadFileToBucket(filePath, bucketName, key);
-    console.log(`Файл ${filePath} загружен в бакет ${bucketName} с ключом ${key}`);
+      console.log('Файл Excel успешно сохранен, загружаем в бакет');
+      const bucketName = process.env.BUCKET;
+      const key = `tasks_project_${projectId}_${Date.now()}.xlsx`; // Уникальный ключ
 
-    // Возвращаем URL для доступа к файлу
-    return `https://${bucketName}.storage.yandexcloud.net/${key}`;
+      await uploadFileToBucket(filePath, bucketName, key);
+      console.log(`Файл ${filePath} загружен в бакет ${bucketName} с ключом ${key}`);
+
+      // Возвращаем URL для доступа к файлу
+      return `https://${bucketName}.storage.yandexcloud.net/${key}`;
     } catch (error) {
       console.error('Ошибка при получении задач:', error);
       throw new Error('Не удалось получить данные задач'); // Или обрабатывайте ошибку по-другому
     }
   }
-
 
 }
