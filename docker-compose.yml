@@ -21,8 +21,8 @@ services:
     ports:
       - '3500:3500'
     volumes:
-      - .:/app
-      - /app/node_modules
+      #- .:/app
+      #- /app/node_modules
       - ./exports:/app/exports
   postgresql:
     image: postgres
