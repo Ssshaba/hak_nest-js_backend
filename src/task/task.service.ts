@@ -378,8 +378,9 @@ export class TaskService {
       console.log('Получаем данные задач для проекта');
       console.log(`projectId: ${projectId}`);
 
+      // Получаем задачи из базы данных
       const tasks = await this.prisma.task.findMany({
-        where: { project_id: Number(projectId) }
+        where: { project_id: projectId }
       });
 
       console.log(`Полученные задачи: ${JSON.stringify(tasks)}`); // Логируем задачи для проверки
@@ -400,6 +401,7 @@ export class TaskService {
       ];
       console.log('шаг2');
 
+      // Добавляем строки с данными задач
       tasks.forEach(task => {
         worksheet.addRow({
           id: task.id,
@@ -413,31 +415,26 @@ export class TaskService {
       });
       console.log('шаг3');
 
-      const dirPath = path.resolve(__dirname, '../../exports');
-      // Проверяем наличие директории и создаем ее, если она не существует
-      if (!fs.existsSync(dirPath)) {
-        fs.mkdirSync(dirPath, { recursive: true }); // Создаем директорию
-      }
-
-      const filePath = path.resolve(dirPath, `tasks_project_${projectId}.xlsx`);
+      // Путь для сохранения файла на сервере
+      const filePath = path.resolve(__dirname, `../../exports/tasks_project_${projectId}.xlsx`);
       console.log(`Сохраняем файл Excel на диск: ${filePath}`);
       console.log('шаг4');
 
+      // Убедитесь, что директория exports существует
+      const dir = path.dirname(filePath);
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true }); // Создаём директорию, если она не существует
+      }
+
+      // Сохраняем файл
       await workbook.xlsx.writeFile(filePath);
+      console.log('Файл Excel успешно сохранен на сервере');
 
-      console.log('Файл Excel успешно сохранен, загружаем в бакет');
-      const bucketName = process.env.BUCKET;
-      const key = `tasks_project_${projectId}_${Date.now()}.xlsx`; // Уникальный ключ
-
-      await uploadFileToBucket(filePath, bucketName, key);
-      console.log(`Файл ${filePath} загружен в бакет ${bucketName} с ключом ${key}`);
-
-      // Возвращаем URL для доступа к файлу
-      return `https://${bucketName}.storage.yandexcloud.net/${key}`;
+      // Возвращаем путь к файлу для дальнейшего использования
+      return filePath; // или можно вернуть URL, если у вас есть сервер для его доступа
     } catch (error) {
       console.error('Ошибка при получении задач:', error);
       throw new Error('Не удалось получить данные задач'); // Или обрабатывайте ошибку по-другому
     }
   }
-
 }
