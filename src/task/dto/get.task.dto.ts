@@ -69,14 +69,8 @@ export class GetTaskAllInfoDto {
   @ApiProperty({ name: 'reviewer_id', default: 'number' })
   reviewer_id: number;
 
-  @ApiProperty({ name: 'reviewer' })
-  reviewer: GetUserDto;
-
   @ApiProperty({ name: 'executor_id', default: 'number' })
   executor_id: number;
-
-  @ApiProperty({ name: 'executor' })
-  executor: GetUserDto;
 
   @ApiProperty({ name: 'status', enum: TaskStatus })
   status: TaskStatus;
@@ -86,4 +80,21 @@ export class GetTaskAllInfoDto {
 
   @ApiProperty({ name: 'comoment', default: 'number' })
   comment: string;
+
+  @ApiProperty({ name: 'executor', type: () => GetUserDto2 })
+  executor: GetUserDto2;
+
+  @ApiProperty({ name: 'reviewer', type: () => GetUserDto2 })
+  reviewer: GetUserDto2;
+}
+
+export class GetUserDto2 {
+  @ApiProperty({ name: 'id', default: 'number' })
+  id: number;
+
+  @ApiProperty({ name: 'firstName', default: 'string' })
+  firstName: string;
+
+  @ApiProperty({ name: 'lastName', default: 'string' })
+  lastName: string;
 }

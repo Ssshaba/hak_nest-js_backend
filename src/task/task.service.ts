@@ -201,33 +201,24 @@ export class TaskService {
       onlyMyTasks: boolean,
   ): Promise<Partial<GetTaskShortDto>[]> {
     const searchParam = search ? search.trim() : '';
-    const searchObject =
-        searchParam.length > 0 ? this.createSearchObject(searchParam) : {};
+    const searchObject = searchParam.length > 0 ? this.createSearchObject(searchParam) : {};
     const selectedFields = fields ? fields.split(',') : [];
     const selectedDesc = desc ? desc.split(',') : [];
     const orderParams = this.createTasksOrder(selectedDesc);
     const whereObject: any = {};
 
     try {
-      if (onlyMyTasks == true) {
+      if (onlyMyTasks) {
         // Фильтрация только по задачам текущего пользователя
         whereObject['OR'] = [
-          {
-            executor_id: id,
-          },
-          {
-            reviewer_id: id,
-          },
+          { executor_id: id },
+          { reviewer_id: id },
         ];
       }
       if (role === 'SPECIALIST') {
         whereObject['OR'] = [
-          {
-            executor_id: id,
-          },
-          {
-            reviewer_id: id,
-          },
+          { executor_id: id },
+          { reviewer_id: id },
         ];
       } else if (role === 'CUSTOMER') {
         whereObject['project'] = {
@@ -257,6 +248,20 @@ export class TaskService {
                 title: true,
               },
             },
+            executor: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+              },
+            },
+            reviewer: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+              },
+            },
           },
           orderBy: orderParams.length ? orderParams : { id: 'asc' },
         });
@@ -265,6 +270,7 @@ export class TaskService {
       throw new BadRequestException(error);
     }
   }
+
 
 
   async getTaskById(id: number): Promise<GetTaskAllInfoDto> {
@@ -420,21 +426,20 @@ export class TaskService {
       console.log(`Сохраняем файл Excel на диск: ${filePath}`);
       console.log('шаг4');
 
-      // Убедитесь, что директория exports существует
       const dir = path.dirname(filePath);
       if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, { recursive: true }); // Создаём директорию, если она не существует
+        fs.mkdirSync(dir, { recursive: true });
       }
 
-      // Сохраняем файл
       await workbook.xlsx.writeFile(filePath);
       console.log('Файл Excel успешно сохранен на сервере');
 
-      // Возвращаем путь к файлу для дальнейшего использования
-      return filePath; // или можно вернуть URL, если у вас есть сервер для его доступа
+      const baseUrl = 'https://persiky.ru';
+     // return filePath;
+      return `${baseUrl}${filePath}`;
     } catch (error) {
       console.error('Ошибка при получении задач:', error);
-      throw new Error('Не удалось получить данные задач'); // Или обрабатывайте ошибку по-другому
+      throw new Error('Не удалось получить данные задач');
     }
   }
 }
