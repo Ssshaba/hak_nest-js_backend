@@ -81,20 +81,11 @@ export class GetTaskAllInfoDto {
   @ApiProperty({ name: 'comoment', default: 'number' })
   comment: string;
 
-  @ApiProperty({ name: 'executor', type: () => GetUserDto2 })
-  executor: GetUserDto2;
+  @ApiProperty({ name: 'executor', type: () => GetUserDto })
+  executor: GetUserDto;
 
-  @ApiProperty({ name: 'reviewer', type: () => GetUserDto2 })
-  reviewer: GetUserDto2;
+  @ApiProperty({ name: 'reviewer', type: () => GetUserDto })
+  reviewer: GetUserDto;
 }
 
-export class GetUserDto2 {
-  @ApiProperty({ name: 'id', default: 'number' })
-  id: number;
 
-  @ApiProperty({ name: 'firstName', default: 'string' })
-  firstName: string;
-
-  @ApiProperty({ name: 'lastName', default: 'string' })
-  lastName: string;
-}
