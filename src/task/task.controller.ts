@@ -64,7 +64,7 @@ export class TaskController {
   }
 
   @ApiBearerAuth('auth')
-  @Roles(Role.ADMIN, Role.CUSTOMER, Role.SPECIALIST)
+  @Roles(Role.ADMIN, Role.CUSTOMER, Role.SPECIALIST, Role.GUEST)
   @Get('by-project/:id')
   @ApiQuery({
     name: 'fields',
